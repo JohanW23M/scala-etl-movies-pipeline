@@ -10,7 +10,7 @@ Este repositorio contiene la arquitectura y el desarrollo de un **Pipeline ETL (
 
 El proyecto está construido íntegramente utilizando el paradigma de **Programación Funcional en Scala**, garantizando la inmutabilidad de los datos, el manejo seguro de errores y la ejecución transaccional hacia una base de datos relacional.
 
-## Stack Tecnológico
+##  Stack Tecnológico
 
 * **Lenguaje:** Scala 3
 * **Streaming & I/O:** `FS2` (Lectura eficiente y procesamiento de flujos de datos).
@@ -20,7 +20,7 @@ El proyecto está construido íntegramente utilizando el paradigma de **Programa
 
 ---
 
-## Arquitectura del Pipeline ETL
+##  Arquitectura del Pipeline ETL
 
 El flujo de datos está orquestado en tres fases modulares, evitando estados mutables y asegurando la reproducibilidad:
 
@@ -37,7 +37,7 @@ Uno de los mayores desafíos técnicos resueltos fue la normalización de column
 
 ### 3. Carga y Persistencia Relacional (Doobie)
 Los datos estructurados son inyectados en una base de datos MySQL rigurosamente normalizada.
-* **Diseño Transaccional:** Ejecución de sentencias SQL fuertemente tipadas y desacopladas por entidad.
+* **Diseño Transaccional:** Ejecución de sentencias SQL fuertemente tipadas y desacopladas por entidad (`loader/ProyectoIntegradorLoader.scala`).
 * **Procesamiento por Lotes (Batching):** Implementación de inserciones masivas (`Update.updateMany`) para optimizar el rendimiento de red y reducir el número de conexiones.
 * **Integridad Referencial:** Inserción controlada de tablas maestras, entidades principales (`pelicula`) e intermedias (relaciones N:M), previniendo duplicidad mediante cláusulas `ON DUPLICATE KEY UPDATE`.
 
@@ -59,6 +59,7 @@ Proyecto_Integrador/
 │   │       ├── loader/          <-- Capa de persistencia JDBC (Doobie)
 │   │       ├── utilities/       <-- Reglas de negocio y sanitización
 │   │       └── Main.scala       <-- Orquestador del pipeline (Punto de entrada)
+└── README.md                    <-- Documentación principal
 
 ```
 
@@ -67,6 +68,7 @@ Proyecto_Integrador/
 1. **Ausencia de Estado Mutable:** Todas las transformaciones retornan nuevas estructuras, previniendo condiciones de carrera.
 2. **Escalabilidad y Rendimiento:** El uso de streaming y operaciones *batch* permite escalar la solución a datasets de millones de registros de manera fluida.
 3. **Atomicidad:** El uso de `ConnectionIO` asegura que la carga de una película completa (incluyendo todas sus tablas intermedias) se ejecute como una única transacción segura.
+4. **Explotación de Datos:** Ejecución nativa de consultas analíticas (top ingresos, frecuencia de idiomas, directores) directamente desde Scala validando la carga.
 
 ```
 
